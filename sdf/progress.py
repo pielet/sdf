@@ -1,15 +1,16 @@
 import sys
 import time
 
+
 def pretty_time(seconds):
     seconds = int(round(seconds))
     s = seconds % 60
     m = (seconds // 60) % 60
-    h = (seconds // 3600)
+    h = seconds // 3600
     return '%d:%02d:%02d' % (h, m, s)
 
-class Bar(object):
 
+class Bar(object):
     def __init__(self, max_value=100, min_value=0, enabled=True):
         self.min_value = min_value
         self.max_value = max_value
@@ -73,7 +74,7 @@ class Bar(object):
     def render_bar(self, size=30):
         a = int(round(self.percent_complete / 100.0 * size))
         b = size - a
-        return '[' + '#' * a + '-'  * b + ']'
+        return '[' + '#' * a + '-' * b + ']'
 
     def render_elapsed_time(self):
         return pretty_time(self.elapsed_time)

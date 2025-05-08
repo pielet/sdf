@@ -1,9 +1,10 @@
 from sdf import *
 
+
 def section(z0, z1, d0, d1, e=ease.linear):
-    f = cylinder(d0/2).transition_linear(
-        cylinder(d1/2), Z * z0, Z * z1, e)
+    f = cylinder(d0 / 2).transition_linear(cylinder(d1 / 2), Z * z0, Z * z1, e)
     return f & slab(z0=z0, z1=z1)
+
 
 f = section(0, 0.2, 1, 1.25)
 f |= section(0.2, 0.3, 1.25, 1).k(0.05)

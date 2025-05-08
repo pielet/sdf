@@ -1,8 +1,10 @@
 import itertools
+
 import numpy as np
 
 _min = np.minimum
 _max = np.maximum
+
 
 def union(a, *bs, k=None):
     def f(p):
@@ -17,7 +19,9 @@ def union(a, *bs, k=None):
                 m = d2 + (d1 - d2) * h
                 d1 = m - K * h * (1 - h)
         return d1
+
     return f
+
 
 def difference(a, *bs, k=None):
     def f(p):
@@ -32,7 +36,9 @@ def difference(a, *bs, k=None):
                 m = d1 + (-d2 - d1) * h
                 d1 = m + K * h * (1 - h)
         return d1
+
     return f
+
 
 def intersection(a, *bs, k=None):
     def f(p):
@@ -47,7 +53,9 @@ def intersection(a, *bs, k=None):
                 m = d2 + (d1 - d2) * h
                 d1 = m + K * h * (1 - h)
         return d1
+
     return f
+
 
 def blend(a, *bs, k=0.5):
     def f(p):
@@ -57,27 +65,37 @@ def blend(a, *bs, k=0.5):
             K = k or getattr(b, '_k', None)
             d1 = K * d2 + (1 - K) * d1
         return d1
+
     return f
+
 
 def negate(other):
     def f(p):
         return -other(p)
+
     return f
+
 
 def dilate(other, r):
     def f(p):
         return other(p) - r
+
     return f
+
 
 def erode(other, r):
     def f(p):
         return other(p) + r
+
     return f
+
 
 def shell(other, thickness):
     def f(p):
         return np.abs(other(p)) - thickness / 2
+
     return f
+
 
 def repeat(other, spacing, count=None, padding=0):
     count = np.array(count) if count is not None else None
@@ -111,4 +129,5 @@ def repeat(other, spacing, count=None, padding=0):
         for b in A[1:]:
             a = _min(a, b)
         return a
+
     return f

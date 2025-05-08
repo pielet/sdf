@@ -1,5 +1,7 @@
-from sdf import *
 import sys
+
+from sdf import *
+
 
 def hollowed_with_cross_hatch_ribs(f, shell_thickness, rib_width, rib_height, rib_spacing):
     # make infinite cross-hatch rib pattern
@@ -17,9 +19,11 @@ def hollowed_with_cross_hatch_ribs(f, shell_thickness, rib_width, rib_height, ri
 
     return f
 
+
 def hollowed(f, shell_thickness):
     d = shell_thickness
     return f.erode(d / 2).shell(d)
+
 
 def main():
     mesh = Mesh.from_file(sys.argv[1])
@@ -43,6 +47,7 @@ def main():
     # f = f.elongate((10, 10, 1))
 
     f.save('out.stl', step=0.25)
+
 
 if __name__ == '__main__':
     main()

@@ -1,5 +1,7 @@
-from sdf import *
 import os
+
+from sdf import *
+
 
 def generate(f, name, samples=2**26, **kwargs):
     os.makedirs('models', exist_ok=True)
@@ -11,6 +13,7 @@ def generate(f, name, samples=2**26, **kwargs):
     render_cmd = './render %s %s' % (stl_path, png_path)
     f.save(stl_path, samples=samples, **kwargs)
     os.system(render_cmd)
+
 
 # example
 f = sphere(1) & box(1.5)

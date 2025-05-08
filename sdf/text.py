@@ -1,12 +1,13 @@
-from PIL import Image, ImageFont, ImageDraw
-import scipy.ndimage as nd
 import numpy as np
+import scipy.ndimage as nd
+from PIL import Image, ImageDraw, ImageFont
 
 from . import d2
 
 # TODO: add support for newlines?
 
-PIXELS = 2 ** 22
+PIXELS = 2**22
+
 
 def _load_image(thing):
     if isinstance(thing, str):
@@ -14,6 +15,7 @@ def _load_image(thing):
     elif isinstance(thing, (np.ndarray, np.generic)):
         return Image.fromarray(thing)
     return Image.fromarray(np.array(thing))
+
 
 def measure_text(name, text, width=None, height=None):
     font = ImageFont.truetype(name, 96)
@@ -27,6 +29,7 @@ def measure_text(name, text, width=None, height=None):
         height = width / aspect
     return (width, height)
 
+
 def measure_image(thing, width=None, height=None):
     im = _load_image(thing)
     w, h = im.size
@@ -38,6 +41,7 @@ def measure_image(thing, width=None, height=None):
     if height is None:
         height = width / aspect
     return (width, height)
+
 
 @d2.sdf2
 def text(font_name, text, width=None, height=None, pixels=PIXELS, points=512):
@@ -59,10 +63,12 @@ def text(font_name, text, width=None, height=None, pixels=PIXELS, points=512):
 
     return _sdf(width, height, pixels, px, py, im)
 
+
 @d2.sdf2
 def image(thing, width=None, height=None, pixels=PIXELS):
     im = _load_image(thing).convert('L')
     return _sdf(width, height, pixels, 0, 0, im)
+
 
 def _sdf(width, height, pixels, px, py, im):
     tw, th = im.size
@@ -100,10 +106,10 @@ def _sdf(width, height, pixels, px, py, im):
         width = height * aspect
     if height is None:
         height = width / aspect
-    x0 = -width / 2
-    y0 = -height / 2
-    x1 = width / 2
-    y1 = height / 2
+    x0 = 0
+    y0 = 0
+    x1 = width
+    y1 = height
 
     # scale texture distances
     scale = width / tw
@@ -114,8 +120,8 @@ def _sdf(width, height, pixels, px, py, im):
     rectangle = d2.rectangle((width / 2, height / 2))
 
     def f(p):
-        x = p[:,0]
-        y = p[:,1]
+        x = p[:, 0]
+        y = p[:, 1]
         u = (x - x0) / (x1 - x0)
         v = (y - y0) / (y1 - y0)
         v = 1 - v
@@ -123,11 +129,12 @@ def _sdf(width, height, pixels, px, py, im):
         j = v * ph + py
         d = _bilinear_interpolate(texture, i, j)
         q = rectangle(p).reshape(-1)
-        outside = (i < 0) | (i >= tw-1) | (j < 0) | (j >= th-1)
+        outside = (i < 0) | (i >= tw - 1) | (j < 0) | (j >= th - 1)
         d[outside] = q[outside]
         return d
 
     return f
+
 
 def _bilinear_interpolate(a, x, y):
     x0 = np.floor(x).astype(int)

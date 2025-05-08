@@ -1,9 +1,10 @@
-from scipy import interpolate
-
-import numpy as np
 import threading
 
-from .d3 import sdf3, box
+import numpy as np
+from scipy import interpolate
+
+from .d3 import box, sdf3
+
 
 # TODO: allow transforming mesh
 class Mesh:
@@ -37,7 +38,7 @@ class Mesh:
     def transformed(self, matrix):
         points = np.hstack([self.points, np.ones((self.points.shape[0], 1))])
         points = points @ np.array(matrix).T
-        points = points[:,:3]
+        points = points[:, :3]
         return Mesh(points, self.triangles)
 
     def scaled(self, scale):
@@ -72,12 +73,11 @@ class Mesh:
 
         half_width_voxels = 3
         if half_width is not None:
-            half_width_voxels = max(
-                half_width_voxels, int(np.ceil(half_width / voxel_size)))
+            half_width_voxels = max(half_width_voxels, int(np.ceil(half_width / voxel_size)))
 
         grid = vdb.FloatGrid.createLevelSetFromPolygons(
-            self.points, triangles=self.triangles,
-            transform=transform, halfWidth=half_width_voxels)
+            self.points, triangles=self.triangles, transform=transform, halfWidth=half_width_voxels
+        )
 
         v0, v1 = grid.evalActiveVoxelBoundingBox()
         ijk0 = np.array(v0, dtype=int)
@@ -94,7 +94,8 @@ class Mesh:
         grid.copyToArray(A, ijk=ijk0)
 
         interpolator = interpolate.RegularGridInterpolator(
-            (X, Y, Z), A, bounds_error=False, fill_value=grid.background)
+            (X, Y, Z), A, bounds_error=False, fill_value=grid.background
+        )
 
         # num_voxels = size[0] * size[1] * size[2]
         # print('mesh voxels = %d' % num_voxels)
